@@ -57,6 +57,21 @@ app.get("/api/books/:id", (req, res) => {
   });
 });
 
+app.put("/api/books/:id", (req, res) => {
+  const { name, description, favorite } = req.body;
+
+  const updatedBookField = {};
+  if (name !== undefined) updatedBookField.name = name;
+  if (description !== undefined) updatedBookField.description = description;
+  if (favorite !== undefined) updatedBookField.favorite = favorite;
+
+  Book.findByIdAndUpdate(req.params.id, updatedBookField, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  }).then((updatedBook) => res.json(updatedBook));
+});
+
 app.post("/api/books", (req, res) => {
   //   const { name, description, favorite } = req.body;
 
