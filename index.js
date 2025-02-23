@@ -1,5 +1,6 @@
+require("dotenv").config();
 const express = require("express");
-
+const Book = require("./models/book");
 const app = express();
 
 app.use(express.json());
@@ -40,36 +41,61 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/books", (req, res) => {
-  res.json(books);
+  Book.find({}).then((book) => {
+    res.json(book);
+  });
 });
 
 app.get("/api/books/:id", (req, res) => {
-  const id = req.params.id;
-  const book = books.find((book) => book.id === id);
-  res.json(book);
+  //   const id = req.params.id;
+  //   const book = books.find((book) => book.id === id);
+  //   res.json(book);
+
+  Book.findById(req.params.id).then((book) => {
+    res.json(book);
+  });
 });
 
 app.post("/api/books", (req, res) => {
-  const { name, description, favorite } = req.body;
+  //   const { name, description, favorite } = req.body;
 
+  //   if (!name) {
+  //     return res.status(400).json({ error: "name missing" });
+  //   }
+  //   const newBook = {
+  //     id: String(books.length + 1),
+  //     name,
+  //     description,
+  //     favorite: favorite || false,
+  //   };
+  //   books = books.concat(newBook);
+  //   res.json(newBook);
+
+  const { name, description, favorite } = req.body;
   if (!name) {
-    return res.status(400).json({ error: "name missing" });
+    res.status(400).json({ error: "name missing" });
   }
-  const newBook = {
-    id: String(books.length + 1),
+
+  const book = new Book({
     name,
     description,
     favorite: favorite || false,
-  };
-  books = books.concat(newBook);
-  res.json(newBook);
+  });
+
+  book.save().then((book) => {
+    res.json(book);
+  });
 });
 
 app.delete("/api/books/:id", (req, res) => {
-  const id = req.params.id;
-  books = books.filter((book) => book.id !== id);
+  //   const id = req.params.id;
+  //   books = books.filter((book) => book.id !== id);
 
-  res.status(204).end();
+  //   res.status(204).end();
+
+  Book.findOneAndDelete(req.params.id).then(() => {
+    res.status(204).end();
+  });
 });
 
 const unknownEndpoint = (req, res) => {
