@@ -5,6 +5,7 @@ const Book = require("./models/book");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static("dist"));
 
 const requestLogger = (req, res, next) => {
   console.log("Method:", req.method);
